@@ -70,7 +70,15 @@ var AMDToCommon = (function(){
     var withExport = exportConverter(withRequire, secondPassNode);
 
     var thirdPassNode = esprima.parse(withExport, this.parseOptions);
-    return strictConverter(withExport, thirdPassNode);
+
+    var withStrict = strictConverter(withExport, thirdPassNode);
+
+    withStrict = withStrict
+      .replace(/^define\(function\(require, exports, module\){\n/, '')
+      .replace(/\n}\);$/, '')
+      .replace(/(^|\n)(\t|\s{2})/g, '$1');
+
+    return withStrict;
   };
 
   return _convert;
